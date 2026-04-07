@@ -1,0 +1,16 @@
+FROM registry.redhat.io/ubi9/python-312 as builder
+
+USER 0
+ADD app /tmp/src
+RUN /usr/bin/fix-permissions /tmp/src
+USER 1001
+
+RUN /usr/libexec/s2i/assemble
+
+FROM registry.redhat.io/ubi9/python-312-minimal
+
+COPY --from=builder $APP_ROOT $APP_ROOT
+
+USER 1001
+EXPOSE 5000
+CMD /usr/libexec/s2i/run

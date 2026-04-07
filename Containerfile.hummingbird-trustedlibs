@@ -1,0 +1,26 @@
+FROM quay.io/hummingbird/python:3.12-builder AS builder
+
+USER 0
+RUN python3.12 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+WORKDIR /app
+COPY /app/requirements.txt .
+RUN --mount=type=secret,id=pip.conf,target=/opt/venv/pip.conf pip install --no-cache-dir -r requirements.txt
+
+USER ${CONTAINER_DEFAULT_USER}
+
+FROM quay.io/hummingbird/python:3.12
+
+USER 0
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+USER ${CONTAINER_DEFAULT_USER}
+WORKDIR /app
+COPY /app .
+
+EXPOSE 5000
+CMD ["python3.12", "app.py"]
