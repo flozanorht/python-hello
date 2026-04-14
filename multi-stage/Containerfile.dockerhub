@@ -1,16 +1,15 @@
-FROM python:3.12 AS builder
+FROM docker.io/library/python:3.12 AS builder
+
+# Install non-Python dependencies and additional build-time tools
 
 WORKDIR /app
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-COPY /app/requirements.txt .
+COPY app/requirements.txt .
 
-# Install non-Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt 
 
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt 
-
-FROM python:3.12-slim
+FROM docker.io/library/python:3.12-slim
 
 WORKDIR /app
 COPY --from=builder /opt/venv /opt/venv
@@ -20,8 +19,8 @@ ENV PATH="/opt/venv/bin:$PATH" \
 
 RUN useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app
-COPY --chown=appuser:appuser /app .
-
 USER appuser
+COPY app .
+
 EXPOSE 5000
 CMD ["python", "app.py"]
