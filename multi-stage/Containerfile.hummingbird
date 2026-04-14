@@ -1,6 +1,8 @@
 FROM quay.io/hummingbird/python:3.12-builder AS builder
 
 USER 0
+# Install non-Python dependencies and additional build-time tools
+
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
