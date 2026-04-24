@@ -1,4 +1,4 @@
-FROM quay.io/hummingbird/python:3.12
+FROM registry.access.redhat.com/hi/python:3.12
 
 USER 0
 RUN [ "python3", "-m", "venv", "/opt/venv" ]
