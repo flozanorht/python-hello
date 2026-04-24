@@ -1,4 +1,4 @@
-FROM quay.io/hummingbird/python:3.12-builder AS builder
+FROM registry.access.redhat.com/hi/python:3.12-builder AS builder
 
 USER 0
 # Install non-Python dependencies and additional build-time tools
@@ -12,7 +12,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 USER ${CONTAINER_DEFAULT_USER}
 
-FROM quay.io/hummingbird/python:3.12
+FROM registry.access.redhat.com/hi/python:3.12
 
 USER 0
 COPY --from=builder /opt/venv /opt/venv
